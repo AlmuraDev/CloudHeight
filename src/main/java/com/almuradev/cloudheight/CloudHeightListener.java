@@ -37,7 +37,7 @@ public class CloudHeightListener implements Listener {
     public void onSpoutCraftEnable(SpoutCraftEnableEvent event) {
         SpoutPlayer player = event.getPlayer();
         SkyManager sky = SpoutManager.getSkyManager();
-        if (!player.hasPermission("cloudheight.ignore")) {
+        if (!VaultUtil.hasPermission(player.getName(), player.getWorld().getName(), "cloudheight.ignore")) {
             if (plugin.getConfiguration().getAll().containsKey(event.getPlayer().getWorld())) {
                 sky.setCloudHeight(player, plugin.getConfiguration().get(event.getPlayer().getWorld()));
             }
