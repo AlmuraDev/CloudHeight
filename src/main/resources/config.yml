@@ -1,0 +1,6 @@
+# Specify the world name and height for the height you want clouds to appear at in each world. Default height in Minecraft is height 170.
+worlds:
+  example_world:
+    height: 170
+  example_world_2:
+    height: 170
