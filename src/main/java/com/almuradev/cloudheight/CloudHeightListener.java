@@ -40,7 +40,7 @@ public class CloudHeightListener implements Listener {
 	}
 
 	@EventHandler
-	public void onSpoutCraftEnable(SpoutCraftEnableEvent event) {
+	public void onSpoutCraftEnable(final SpoutCraftEnableEvent event) {
 		setSky(event.getPlayer(), event.getPlayer().getWorld());
 	}
 
