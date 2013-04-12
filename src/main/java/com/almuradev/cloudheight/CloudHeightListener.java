@@ -19,28 +19,57 @@
  */
 package com.almuradev.cloudheight;
 
+import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerPortalEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.getspout.spoutapi.SpoutManager;
 import org.getspout.spoutapi.event.spout.SpoutCraftEnableEvent;
 import org.getspout.spoutapi.player.SkyManager;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
 public class CloudHeightListener implements Listener {
-    private final CloudHeightPlugin plugin;
+	private final CloudHeightPlugin plugin;
 
-    public CloudHeightListener(CloudHeightPlugin plugin) {
-        this.plugin = plugin;
-    }
+	public CloudHeightListener(CloudHeightPlugin plugin) {
+		this.plugin = plugin;
+	}
 
-    @EventHandler
-    public void onSpoutCraftEnable(SpoutCraftEnableEvent event) {
-        SpoutPlayer player = event.getPlayer();
-        SkyManager sky = SpoutManager.getSkyManager();
-        if (!VaultUtil.hasPermission(player.getName(), player.getWorld().getName(), "cloudheight.ignore")) {
-            if (plugin.getConfiguration().getAll().containsKey(event.getPlayer().getWorld())) {
-                sky.setCloudHeight(player, plugin.getConfiguration().get(event.getPlayer().getWorld()));
-            }
-        }
-    }
+	@EventHandler
+	public void onSpoutCraftEnable(SpoutCraftEnableEvent event) {
+		setSky(event.getPlayer(), event.getPlayer().getWorld());
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onPlayerTeleport(final PlayerTeleportEvent event) {
+		if (!event.getFrom().getWorld().equals(event.getTo().getWorld())) {
+			setSky(event.getPlayer(), event.getPlayer().getWorld());
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onPlayerRespawn(final PlayerRespawnEvent event) {
+		setSky(event.getPlayer(), event.getPlayer().getWorld());
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onPlayerPortal(final PlayerPortalEvent event) {
+		setSky(event.getPlayer(), event.getPlayer().getWorld());
+	}
+
+	public void setSky(Player player, World world) { 
+		SpoutPlayer sPlayer = (SpoutPlayer) player;
+		if (sPlayer.isSpoutCraftEnabled()) { // Skip if user isn't using Spoutcraft
+			SkyManager sky = SpoutManager.getSkyManager();
+			if (!VaultUtil.hasPermission(player.getName(), player.getWorld().getName(), "cloudheight.ignore")) {
+				if (plugin.getConfiguration().getAll().containsKey(world)) {
+					sky.setCloudHeight(sPlayer, plugin.getConfiguration().get(world));    				
+				}
+			}	
+		}
+	}
 }
